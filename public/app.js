@@ -507,7 +507,8 @@ function exportChat(chat) {
   })]
   const link = element('a')
   link.href = URL.createObjectURL(new Blob([sections.join('\n\n')], { type: 'text/markdown;charset=utf-8' }))
-  link.download = `${chat.title.replace(/[^\p{L}\p{N}]+/gu, '-').slice(0, 65) || 'milo-chat'}.md`
+  const slug = Array.from(chat.title.replace(/[^\p{L}\p{N}]+/gu, '-')).slice(0, 65).join('').replace(/^-+|-+$/g, '')
+  link.download = `milo-${slug || 'chat'}.md`
   link.click()
   setTimeout(() => URL.revokeObjectURL(link.href), 1000)
   toast('Chat exported')
