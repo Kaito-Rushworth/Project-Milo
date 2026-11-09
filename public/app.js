@@ -213,8 +213,12 @@ function renderComposer() {
     prompt.focus()
   })))
   $('files').hidden = !files.length
-  $('send').hidden = pending?.chat === current
-  $('stop').hidden = pending?.chat !== current
+  $('send').hidden = Boolean(pending)
+  const stop = $('stop')
+  stop.hidden = !pending
+  const stopLabel = pending && pending.chat !== current ? `Stop reply in ${pending.chat.title}` : 'Stop reply'
+  stop.title = stopLabel
+  stop.setAttribute('aria-label', stopLabel)
   $('send').disabled = Boolean(pending) || loadingFiles || !config || (!prompt.value.trim() && !files.length)
 }
 
