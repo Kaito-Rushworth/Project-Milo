@@ -542,6 +542,14 @@ function showAction(action) {
 $('new-chat').addEventListener('click', () => openChat(null))
 $('search-chat').addEventListener('click', openSearch)
 $('query').addEventListener('input', renderSearch)
+$('query').addEventListener('keydown', event => {
+  if (event.isComposing || !['Enter', 'ArrowDown'].includes(event.key)) return
+  const first = $('results').querySelector('.result')
+  if (!first) return
+  event.preventDefault()
+  if (event.key === 'Enter') first.click()
+  else first.focus()
+})
 $('sidebar-toggle').addEventListener('click', () => {
   if (mobile.matches) {
     if (workspace.classList.contains('sidebar-open')) closeSidebar()
