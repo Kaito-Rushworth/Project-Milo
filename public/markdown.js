@@ -113,7 +113,20 @@ export function renderMarkdown(text, copy) {
       while (lines[index]?.trim() && !fence.test(lines[index]) && !heading.test(lines[index]) &&
              !listItem.test(lines[index]) && !/^\s*>/.test(lines[index]) &&
              !tableDivider.test(lines[index + 1] || '')) paragraph.push(lines[index++])
-      fragment.append(inline(element('p'), paragraph.join(' ')))
+      const block = element('p')
+      const hardBreak = /(?: {2,}|\\)$/
+      let buffer = ''
+      for (const [position, row] of paragraph.entries()) {
+        if (position < paragraph.length - 1 && hardBreak.test(row)) {
+          inline(block, buffer + row.replace(hardBreak, ''))
+          block.append(element('br'))
+          buffer = ''
+        } else {
+          buffer += row + ' '
+        }
+      }
+      inline(block, buffer.trimEnd())
+      fragment.append(block)
     }
   }
   return fragment
