@@ -378,6 +378,7 @@ async function requestReply(chat, responseMode) {
   render()
   scrollToBottom()
   persist()
+  let lastCheckpoint = Date.now()
   $('announcement').textContent = 'Milo is preparing a reply.'
 
   try {
@@ -393,6 +394,10 @@ async function requestReply(chat, responseMode) {
       if (event.type === 'delta') {
         reply.text += event.text
         reply.detail = ''
+        if (Date.now() - lastCheckpoint >= 2000) {
+          lastCheckpoint = Date.now()
+          persist()
+        }
       } else if (event.type === 'status') {
         reply.detail = event.text
       } else if (event.type === 'done') {
