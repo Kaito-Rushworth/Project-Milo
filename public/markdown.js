@@ -70,9 +70,14 @@ export function renderMarkdown(text, copy) {
       const wrap = element('div', 'table-wrap')
       const table = element('table')
       const labels = cells(line)
+      const alignment = cells(lines[index]).map(rule => {
+        if (!rule.endsWith(':')) return 'left'
+        return rule.startsWith(':') ? 'center' : 'right'
+      })
       const header = table.createTHead().insertRow()
-      for (const label of labels) {
+      for (const [column, label] of labels.entries()) {
         const cell = inline(element('th'), label)
+        cell.dataset.align = alignment[column] || 'left'
         cell.scope = 'col'
         header.append(cell)
       }
@@ -81,7 +86,10 @@ export function renderMarkdown(text, copy) {
       while (lines[index]?.includes('|') && lines[index].trim()) {
         const values = cells(lines[index++])
         const row = body.insertRow()
-        for (let column = 0; column < labels.length; column++) inline(row.insertCell(), values[column] || '')
+        for (let column = 0; column < labels.length; column++) {
+          const cell = inline(row.insertCell(), values[column] || '')
+          cell.dataset.align = alignment[column] || 'left'
+        }
       }
       wrap.append(table)
       fragment.append(wrap)

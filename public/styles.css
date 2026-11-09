@@ -143,6 +143,8 @@ h1 em { font-style: normal; color: var(--accent); }
 .bubble table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .bubble th, .bubble td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; }
 .bubble th { background: var(--raised); }
+.bubble [data-align="center"] { text-align: center; }
+.bubble [data-align="right"] { text-align: right; }
 .message-controls { display: flex; gap: 3px; margin: 6px 0 0 33px; }
 .user .message-controls { margin: 3px 0 0; justify-content: flex-end; }
 .message-controls .icon-button { width: 30px; height: 28px; }
