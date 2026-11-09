@@ -182,6 +182,12 @@ const server = createServer(async (req, res) => {
   }
 
   const path = req.url.split('?')[0]
+  const allowedMethod = path === '/api/chat' ? 'POST' : path === '/api/config' ? 'GET' : null
+  if (allowedMethod && req.method !== allowedMethod) {
+    res.setHeader('Allow', allowedMethod)
+    json(res, 405, { error: `Use ${allowedMethod} for this route.` })
+    return
+  }
   if (req.method === 'GET' && path === '/api/config') {
     json(res, 200, { demo: !key, model: key ? model : null })
     return
