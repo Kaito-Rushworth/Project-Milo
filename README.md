@@ -4,7 +4,7 @@ Milo is a local AI chat workspace. It streams replies, keeps conversations searc
 
 ## Run on Windows
 
-With Node.js 22 or later, run this from the Project Milo folder in PowerShell.
+With Node.js 22.9 or later, run this from the Project Milo folder in PowerShell.
 
 ```powershell
 npm start
