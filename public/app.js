@@ -80,6 +80,7 @@ let mode = current?.mode || 'chat'
 let theme = ['dark', 'light', 'system'].includes(saved.theme) ? saved.theme : 'dark'
 let pending = null
 let files = []
+const drafts = new Map()
 let composerVersion = 0
 let loadingFiles = false
 let config = null
@@ -164,11 +165,14 @@ function closeSidebar() {
 }
 
 function openChat(chat) {
-  if (chat !== current || chat === null) {
+  if (chat !== current) {
+    if (prompt.value || files.length) drafts.set(current, { text: prompt.value, files })
+    else drafts.delete(current)
     current = chat
+    const draft = drafts.get(chat)
     composerVersion++
-    prompt.value = ''
-    files = []
+    prompt.value = draft?.text || ''
+    files = [...(draft?.files || [])]
     loadingFiles = false
     setMode(chat?.mode || 'chat')
   }
@@ -410,6 +414,7 @@ async function requestReply(chat, responseMode) {
 function submit() {
   if (pending || loadingFiles || !config || (!prompt.value.trim() && !files.length)) return
   const text = prompt.value.trim()
+  drafts.delete(current)
   if (!current) current = createChat((text || files[0].name).replace(/\s+/g, ' ').slice(0, 68))
   current.messages.push({ role: 'user', text, files })
   composerVersion++
@@ -600,6 +605,8 @@ $('action-form').addEventListener('submit', event => {
     persist()
   } else {
     chats.splice(chats.indexOf(chat), 1)
+    prompt.value = ''
+    files = []
     openChat(null)
   }
   $('action-dialog').close()
