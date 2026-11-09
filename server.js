@@ -101,6 +101,9 @@ async function* openAI({ mode, input }, signal) {
     method: 'POST', signal,
     headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(options),
+  }).catch(error => {
+    if (signal.aborted) throw error
+    throw new Error('Milo could not reach OpenAI. Check the connection and try again.')
   })
   if (!upstream.ok) {
     await upstream.body?.cancel()
