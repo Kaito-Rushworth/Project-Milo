@@ -458,10 +458,12 @@ function renderSearch() {
   const query = $('query').value.trim().toLowerCase()
   const results = orderedChats().flatMap(chat => {
     const match = query && chat.messages.find(item => item.text.toLowerCase().includes(query))
-    if (!chat.title.toLowerCase().includes(query) && !match) return []
+    const attachment = query && chat.messages.flatMap(item => item.files || [])
+      .find(file => file.name.toLowerCase().includes(query))
+    if (!chat.title.toLowerCase().includes(query) && !match && !attachment) return []
     const button = element('button', 'result', chat.title)
     const position = match ? Math.max(0, match.text.toLowerCase().indexOf(query) - 35) : 0
-    button.append(element('small', '', match ? match.text.slice(position, position + 120) : new Date(chat.updated).toLocaleString()))
+    button.append(element('small', '', match ? match.text.slice(position, position + 120) : attachment?.name || new Date(chat.updated).toLocaleString()))
     button.addEventListener('click', () => {
       $('search-dialog').close()
       openChat(chat)
