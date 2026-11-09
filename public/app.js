@@ -518,15 +518,22 @@ function renderConnection() {
   $('connection').dataset.state = offline ? 'offline' : config && !config.demo ? 'ready' : 'demo'
   $('connection').querySelector('span').textContent = label
   const detail = offline ? 'Start the local server, then try connecting again.' : config?.demo
-    ? 'Sample replies only. Add OPENAI_API_KEY to .env and restart the server to use AI.'
+    ? 'Milo is showing sample replies. Create an API key, add it after OPENAI_API_KEY= in .env, and restart the server.'
     : config ? `Model: ${config.model}` : 'Checking the local server…'
   const info = $('connection-info')
   info.replaceChildren(element('strong', '', label), element('p', 'muted', detail))
-  if (offline) {
-    const retry = element('button', 'secondary retry-connection', 'Retry connection')
+  if (config?.demo) {
+    const keyLink = externalLink('Create an OpenAI API key', 'https://platform.openai.com/api-keys')
+    const linkRow = element('p')
+    linkRow.append(keyLink)
+    info.append(linkRow)
+  }
+  if (offline || config?.demo) {
+    const retry = element('button', 'secondary retry-connection', offline ? 'Retry connection' : 'Check connection')
     retry.addEventListener('click', async () => {
       retry.disabled = true
       await connect()
+      if (!$('settings-dialog').open) return
       const replacement = info.querySelector('button')
       if (replacement) replacement.focus()
       else $('settings-dialog').querySelector('[data-close]').focus()
@@ -684,6 +691,7 @@ async function connect() {
     config = await response.json()
     offline = false
   } catch {
+    config = null
     offline = true
   }
   renderConnection()
