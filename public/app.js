@@ -66,7 +66,17 @@ function loadState() {
 }
 
 const saved = loadState()
-const chats = Array.isArray(saved.chats) ? saved.chats : []
+const chats = Array.isArray(saved.chats) ? saved.chats.filter(chat =>
+  typeof chat?.id === 'string' && typeof chat.title === 'string' && Number.isFinite(chat.updated) &&
+  Array.isArray(chat.messages) && chat.messages.every((message, index) =>
+    message?.role === (index % 2 === 0 ? 'user' : 'assistant') && typeof message.text === 'string' &&
+    (message.files === undefined || (Array.isArray(message.files) && message.files.every(file =>
+      typeof file?.name === 'string' && typeof file.text === 'string'))) &&
+    (message.citations === undefined || (Array.isArray(message.citations) && message.citations.every(citation =>
+      typeof citation?.url === 'string' && Number.isInteger(citation.end)))))) : []
+for (const chat of chats) {
+  if (!Object.hasOwn(modes, chat.mode)) chat.mode = 'chat'
+}
 for (const chat of chats) {
   for (const message of chat.messages) {
     if (message.status === 'streaming') {
