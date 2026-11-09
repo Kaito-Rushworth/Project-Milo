@@ -494,10 +494,22 @@ function renderConnection() {
   const label = offline ? 'Offline' : config?.demo ? 'Demo mode' : config ? 'OpenAI enabled' : 'Connecting'
   $('connection').dataset.state = offline ? 'offline' : config && !config.demo ? 'ready' : 'demo'
   $('connection').querySelector('span').textContent = label
-  const detail = offline ? 'Start the local server and reload this page.' : config?.demo
+  const detail = offline ? 'Start the local server, then try connecting again.' : config?.demo
     ? 'Sample replies only. Add OPENAI_API_KEY to .env and restart the server to use AI.'
     : config ? `Model: ${config.model}` : 'Checking the local server…'
-  $('connection-info').replaceChildren(element('strong', '', label), element('p', 'muted', detail))
+  const info = $('connection-info')
+  info.replaceChildren(element('strong', '', label), element('p', 'muted', detail))
+  if (offline) {
+    const retry = element('button', 'secondary retry-connection', 'Retry connection')
+    retry.addEventListener('click', async () => {
+      retry.disabled = true
+      await connect()
+      const replacement = info.querySelector('button')
+      if (replacement) replacement.focus()
+      else $('settings-dialog').querySelector('[data-close]').focus()
+    })
+    info.append(retry)
+  }
   renderComposer()
 }
 
@@ -641,11 +653,16 @@ setMode(mode)
 render()
 renderConnection()
 scrollToBottom()
-try {
-  const response = await fetch('/api/config')
-  if (!response.ok) throw new Error('Connection failed')
-  config = await response.json()
-} catch {
-  offline = true
+async function connect() {
+  try {
+    const response = await fetch('/api/config', { signal: AbortSignal.timeout(5000) })
+    if (!response.ok) throw new Error('Connection failed')
+    config = await response.json()
+    offline = false
+  } catch {
+    offline = true
+  }
+  renderConnection()
 }
-renderConnection()
+
+await connect()

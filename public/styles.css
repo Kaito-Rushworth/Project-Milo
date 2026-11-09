@@ -165,6 +165,7 @@ input.field { width: 100%; }.primary, .secondary { padding: 7px 12px; border-rad
 .muted { color: var(--muted); font-size: 12px; }
 .connection-info { background: var(--raised); border: 1px solid var(--line); padding: 11px 12px; border-radius: 8px; margin-bottom: 13px; }
 .connection-info p { margin: 5px 0 0; }
+.retry-connection { margin-top: 9px; }
 .results { margin-top: 9px; max-height: 45dvh; overflow: auto; }
 .result { width: 100%; text-align: left; padding: 8px; border-radius: 7px; }.result:hover { background: var(--raised); }
 .result small { display: block; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
