@@ -372,7 +372,11 @@ async function requestReply(chat, responseMode) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mode: responseMode, messages: context }),
     })
-    if (!response.ok) throw new Error((await response.json()).error || 'Milo could not start the reply.')
+    if (!response.ok) {
+      const payload = await response.json().catch(() => null)
+      const fallback = `Milo could not start the reply (HTTP ${response.status}).`
+      throw new Error(typeof payload?.error === 'string' && payload.error ? payload.error : fallback)
+    }
     for await (const line of readLines(response.body)) {
       if (!line) continue
       const event = JSON.parse(line)
