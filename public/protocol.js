@@ -14,15 +14,17 @@ export const limits = {
 }
 
 export async function* readLines(stream) {
+  const maxLineLength = 1_000_000
   let buffer = ''
   for await (const chunk of stream.pipeThrough(new TextDecoderStream())) {
     buffer += chunk
     let newline
     while ((newline = buffer.indexOf('\n')) !== -1) {
+      if (newline > maxLineLength) throw new Error('The stream returned an oversized event.')
       yield buffer.slice(0, newline).replace(/\r$/, '')
       buffer = buffer.slice(newline + 1)
     }
-    if (buffer.length > 1_000_000) throw new Error('The stream returned an oversized event.')
+    if (buffer.length > maxLineLength) throw new Error('The stream returned an oversized event.')
   }
   if (buffer) yield buffer.replace(/\r$/, '')
 }
