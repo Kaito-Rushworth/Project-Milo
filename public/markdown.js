@@ -20,7 +20,7 @@ export function externalLink(label, href) {
 }
 
 function inline(node, text) {
-  const syntax = /`([^`\n]+)`|\[([^\]\n]+)\]\(([^\s)]+)\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*/g
+  const syntax = /`([^`\n]+)`|\[([^\]\n]+)\]\(((?:[^\s()]|\([^\s()]*\))+)\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*/g
   let offset = 0
   for (const token of text.matchAll(syntax)) {
     node.append(text.slice(offset, token.index))
