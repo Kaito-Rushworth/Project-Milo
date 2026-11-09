@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111218">
+  <title>Milo · AI workspace</title>
+  <link rel="icon" href="/milo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <div class="workspace">
+    <button id="scrim" class="scrim" aria-label="Close sidebar" hidden></button>
+    <aside id="sidebar" class="sidebar" aria-label="Conversations">
+      <div class="brand"><img src="/milo.svg" width="37" height="37" alt=""><div><strong>Milo</strong><small>AI WORKSPACE</small></div></div>
+      <button id="new-chat" class="new-chat"><span data-icon="plus"></span> New chat <kbd>Alt N</kbd></button>
+      <button id="search-chat" class="side-button"><span data-icon="search"></span> Search chats <kbd>Alt K</kbd></button>
+      <div class="history-label">CONVERSATIONS</div>
+      <nav id="history" aria-label="Chat history"></nav>
+      <div class="side-footer"><div class="avatar">M</div><div><strong>Local workspace</strong><small>History stays in this browser</small></div><button id="settings" class="icon-button" title="Settings" aria-label="Settings" data-icon="settings"></button></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="sidebar-toggle" class="icon-button" title="Toggle sidebar" aria-label="Toggle sidebar" aria-controls="sidebar" data-icon="panel"></button>
+        <div class="crumb"><span>Workspace</span><span class="slash">/</span><strong id="title">New chat</strong></div>
+        <div class="top-actions"><button id="connection" class="connection" title="Connection settings"><i></i><span>Connecting</span></button><button id="chat-actions" class="icon-button" title="Conversation actions" aria-label="Conversation actions" popovertarget="actions-menu" data-icon="more" hidden></button></div>
+        <div id="actions-menu" class="popover actions-menu" popover>
+          <button data-action="rename"><span data-icon="edit"></span> Rename</button>
+          <button data-action="export"><span data-icon="download"></span> Export as Markdown</button>
+          <button class="danger" data-action="delete"><span data-icon="trash"></span> Delete chat</button>
+        </div>
+      </header>
+
+      <div id="scroll" class="scroll">
+        <section id="welcome" class="welcome" aria-labelledby="welcome-title">
+          <div class="orb" aria-hidden="true"><div></div><img src="/milo.svg" width="72" height="72" alt=""></div>
+          <div class="eyebrow"><span></span> YOUR AI WORKSPACE</div>
+          <h1 id="welcome-title">Make space for<br><em>a better answer.</em></h1>
+          <p>Think through a problem, work with a file, or follow a question wherever it leads.</p>
+          <div class="suggestions" aria-label="Example prompts">
+            <button data-prompt="Help me turn a rough idea into a one-page project plan. Start by asking me three questions." data-mode="chat"><span class="suggest-icon violet" data-icon="spark"></span><strong>Plan a project</strong><small>From rough idea to next steps</small><span class="arrow" data-icon="arrow"></span></button>
+            <button data-prompt="Help me reason through a difficult decision. Ask me about the options, constraints, and what matters most." data-mode="deep"><span class="suggest-icon teal" data-icon="layers"></span><strong>Think it through</strong><small>Break down a tough decision</small><span class="arrow" data-icon="arrow"></span></button>
+            <button data-prompt="Help me research a topic using primary sources. Ask me what I want to investigate." data-mode="research"><span class="suggest-icon gold" data-icon="globe"></span><strong>Research a topic</strong><small>Find evidence and trace sources</small><span class="arrow" data-icon="arrow"></span></button>
+          </div>
+        </section>
+        <section id="messages" class="messages" aria-label="Messages" hidden></section>
+      </div>
+
+      <div class="composer-area">
+        <button id="jump" class="icon-button jump" aria-label="Jump to latest message" title="Jump to latest message" data-icon="down" hidden></button>
+        <form id="composer" class="composer">
+          <div id="files" class="files" hidden></div>
+          <textarea id="prompt" rows="2" maxlength="12000" placeholder="Message Milo…" aria-label="Message Milo"></textarea>
+          <div class="composer-tools">
+            <button id="attach" type="button" class="icon-button" title="Attach a text file" aria-label="Attach a text file" data-icon="clip"></button>
+            <input id="file-input" type="file" accept=".txt,.md,.csv,.tsv,.json,.jsonl,.log,.js,.ts,.py,.html,.css,.xml,.yaml,.yml,.sql,.toml,.ini,.rs,.go,.java,.c,.cpp,.cs,.sh,.ps1,.rb,.rtf,text/*" multiple hidden>
+            <button id="mode" type="button" class="mode-button" popovertarget="mode-menu"><span id="mode-icon" data-icon="spark"></span><span id="mode-name">Chat</span><span data-icon="chevron"></span></button>
+            <button id="send" type="submit" class="send" title="Send message" aria-label="Send message" data-icon="up" disabled></button>
+            <button id="stop" type="button" class="send" title="Stop reply" aria-label="Stop reply" data-icon="stop" hidden></button>
+          </div>
+        </form>
+        <div class="composer-caption"><span id="caption">Enter to send · Shift+Enter for a new line</span><span><span data-icon="lock"></span> Saved on this device</span></div>
+      </div>
+      <div id="mode-menu" class="popover mode-menu" popover aria-label="Response mode"></div>
+    </main>
+  </div>
+
+  <dialog id="search-dialog"><div class="dialog-head"><h2>Search chats</h2><button class="icon-button" data-close title="Close" aria-label="Close" data-icon="close"></button></div><input id="query" class="field" type="search" placeholder="Search titles and messages…" aria-label="Search titles and messages"><div id="results" class="results"></div></dialog>
+  <dialog id="settings-dialog"><div class="dialog-head"><h2>Workspace settings</h2><button class="icon-button" data-close title="Close" aria-label="Close" data-icon="close"></button></div><div id="connection-info" class="connection-info"></div><label class="theme-row" for="theme">Appearance <select id="theme" class="field"><option value="dark">Dark</option><option value="light">Light</option><option value="system">System</option></select></label><p class="muted">Conversations and text attachments are saved in this browser. When connected, Milo sends recent context to OpenAI to generate replies.</p></dialog>
+  <dialog id="action-dialog"><form id="action-form" method="dialog"><div class="dialog-head"><h2 id="action-title"></h2><button type="button" class="icon-button" data-close title="Close" aria-label="Close" data-icon="close"></button></div><p id="action-description" class="muted" hidden></p><input id="rename-value" class="field" maxlength="100" aria-label="Conversation title"><div class="dialog-buttons"><button type="button" class="secondary" data-close>Cancel</button><button id="action-submit" class="primary" type="submit"></button></div></form></dialog>
+  <div id="announcement" class="sr-only" role="status"></div>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
